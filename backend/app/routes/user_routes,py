@@ -1,0 +1,16 @@
+from fastapi import APIRouter
+from app.schemas.user import UserCreate, UserResponse
+
+
+router = APIRouter(
+    prefix="/users",
+    tags=["Users"]
+)
+
+@router.post("/", response_model=UserResponse)
+def create_user(user: UserCreate):
+    return {
+        "id": 1,
+        "nome": user.nome,
+        "email": user.email
+    }
