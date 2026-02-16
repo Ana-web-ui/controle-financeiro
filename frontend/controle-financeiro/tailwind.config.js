@@ -7,8 +7,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        cyberpink: "#ff0080",
-        darkbg: "#0f0f14",
+        cyberpink: "#ff00aa",
+        darkbg: "#0a0a0f",
       },
     },
   },
