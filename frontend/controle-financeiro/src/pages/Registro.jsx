@@ -24,59 +24,58 @@ function Registro() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-darkbg relative overflow-hidden">
-      
-      <div className="bg-black ">
-        <h2 className="text-3xl font-bold text-white text-center mb-6 tracking-widest">
-          BORA COMEÇAR? VAMOS CRIAR SUA CONTA!
+    <div className="flex items-center justify-center min-h-screen bg-[#070710] px-4">
+      <div className="bg-[#070710] w-full max-w-sm p-8 rounded-2xl">
+        <h2 className="text-2xl font-bold text-white text-center mb-8 leading-snug">
+          BORA COMEÇAR?
+          <br />
+          VAMOS CRIAR SUA CONTA!
         </h2>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-        <div>
-          <label className="text-gray-300 text-sm">E-mail</label>
-          <input
-            type="email"
-            placeholder="Digite seu email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full mt-2 p-3 bg-transparent text-white rounded-xl border border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+          <div>
+            <label className="text-gray-400 text-sm">E-mail</label>
+            <input
+              type="email"
+              placeholder=""
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full mt-2 p-3 bg-transparent text-white rounded-xl border border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
+            />
+          </div>
 
-        <div>
-           <label className="text-gray-300 text-sm">Senha</label>
-          <input
-            type="password"
-            placeholder="Digite sua senha"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full mt-2 p-3 bg-transparent text-white rounded-xl border border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
-          />
-        </div>
+          <div>
+            <label className="text-gray-400 text-sm">Senha</label>
+            <input
+              type="password"
+              placeholder=""
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full mt-2 p-3 bg-transparent text-white rounded-xl border border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
+            />
+          </div>
+
           <button
             type="submit"
-            className="mt-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-pink-600 to-pink-500 hover:scale-105 transition duration-300 shadow-lg shadow-pink-500/30"
+            className="mt-4 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-pink-600 to-pink-500 hover:scale-105 transition duration-300 shadow-lg shadow-pink-500/30"
           >
-            Criar Conta
+            Criar
           </button>
 
-
-        <div className="text-center mt-6 text-sm text-gray-300">
-            Já tem uma conta?{" "}
+          <div className="text-center mt-4 text-sm text-gray-400">
+            Já tem conta?{" "}
             <Link
               to="/Login"
               className="text-pink-500 hover:text-pink-400 transition duration-300 font-medium"
             >
-              entre aqui
+              Clique aqui
             </Link>
           </div>
         </form>
 
-        {message && (
-          <p className="text-center text-cyberpink mt-4">{message}</p>
-        )}
+        {message && <p className="text-center text-pink-500 mt-4">{message}</p>}
       </div>
     </div>
   );

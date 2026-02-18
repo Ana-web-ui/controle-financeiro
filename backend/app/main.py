@@ -9,13 +9,15 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-app.include_router(chat.router)
-app.include_router(user_routes.router)
-
+# 🔥 CORS PRIMEIRO
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # depois podemos restringir
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 🔥 Depois as rotas
+app.include_router(chat.router)
+app.include_router(user_routes.router)

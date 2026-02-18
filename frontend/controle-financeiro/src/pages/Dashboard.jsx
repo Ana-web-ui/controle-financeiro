@@ -6,7 +6,11 @@ import {
   Cell,
   Tooltip,
   ResponsiveContainer,
-  Legend,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
 } from "recharts";
 
 function Dashboard() {
@@ -41,6 +45,8 @@ function Dashboard() {
     "#070F34", // Oxford blue
   ];
 
+  const [tipoGrafico, setTipoGrafico] = useState("pizza");
+
   return (
     <div className="min-h-screen bg-[#070710] text-white p-6">
       <h1 className="text-2xl font-semibold text-pink-500 mb-6">
@@ -51,84 +57,99 @@ function Dashboard() {
       <div className="relative bg-[#0b0b15] p-6 rounded-2xl border border-pink-500/20 shadow-lg shadow-pink-500/10 mb-8">
         <h2 className="mb-4 text-lg text-gray-300">Distribuição de Despesas</h2>
 
-        <ResponsiveContainer width="100%" height={450}>
-          <PieChart>
-            <Pie
-              data={despesas}
-              dataKey="valor"
-              nameKey="nome"
-              cx="50%"
-              cy="45%"
-              innerRadius={80}
-              outerRadius={120}
-              paddingAngle={4}
-              activeOuterRadius={125}
-              label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
-            >
-              {despesas.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
-                  style={{
-                    filter: "drop-shadow(0px 0px 8px rgba(255, 20, 147, 0.4))",
-                  }}
-                />
-              ))}
-            </Pie>
-
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "#0b0b15",
-                border: "1px solid #9201CB",
-                borderRadius: "12px",
-                boxShadow: "0 0 15px rgba(146,1,203,0.5)",
-              }}
-              itemStyle={{ color: "#fff" }}
-              formatter={(value, name) => [`R$ ${value}`, name]}
-            />
-          </PieChart>
-        </ResponsiveContainer>
-
-        {/* Total no centro */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-          <div className="text-center">
-            <p className="text-gray-400 text-sm">Total</p>
-            <p className="text-pink-500 text-2xl font-bold">
-              R$ {total.toFixed(2)}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Adicionar despesa */}
-      <div className="bg-[#0b0b15] p-6 rounded-2xl border border-pink-500/20 shadow-lg shadow-pink-500/10">
-        <h2 className="mb-4 text-lg text-gray-300">Adicionar nova despesa</h2>
-
-        <div className="flex flex-col md:flex-row gap-4">
-          <input
-            type="text"
-            placeholder="Nome da despesa"
-            value={novaDespesa}
-            onChange={(e) => setNovaDespesa(e.target.value)}
-            className="flex-1 bg-transparent border border-pink-500 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-pink-500"
-          />
-
-          <input
-            type="number"
-            placeholder="Valor"
-            value={valorDespesa}
-            onChange={(e) => setValorDespesa(e.target.value)}
-            className="w-full md:w-40 bg-transparent border border-pink-500 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-pink-500"
-          />
+        <div className="flex justify-end mb-4 gap-2">
+          <button
+            onClick={() => setTipoGrafico("pizza")}
+            className={`px-4 py-2 rounded-lg text-sm transition ${
+              tipoGrafico === "pizza"
+                ? "bg-[#9201CB] text-white shadow-lg shadow-purple-500/40"
+                : "bg-[#0b0b15] border border-purple-500 text-gray-300"
+            }`}
+          >
+            Pizza
+          </button>
 
           <button
-            onClick={adicionarDespesa}
-            className="bg-pink-500 text-black px-6 py-3 rounded-xl flex items-center justify-center hover:scale-105 transition shadow-lg shadow-pink-500/40"
+            onClick={() => setTipoGrafico("barra")}
+            className={`px-4 py-2 rounded-lg text-sm transition ${
+              tipoGrafico === "barra"
+                ? "bg-[#34EDF3] text-black shadow-lg shadow-cyan-400/40"
+                : "bg-[#0b0b15] border border-cyan-400 text-gray-300"
+            }`}
           >
-            <ArrowUp size={18} />
+            Barras
           </button>
         </div>
+
+        <ResponsiveContainer width="100%" height={400}>
+          {tipoGrafico === "pizza" ? (
+            <PieChart>
+              <Pie
+                data={despesas}
+                dataKey="valor"
+                nameKey="nome"
+                cx="50%"
+                cy="48%"
+                innerRadius={80}
+                outerRadius={115}
+                activeOuterRadius={125}
+                paddingAngle={4}
+                label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+              >
+                {despesas.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#0b0b15",
+                  border: "1px solid #9201CB",
+                  borderRadius: "12px",
+                }}
+                formatter={(value, name) => [`R$ ${value}`, name]}
+              />
+            </PieChart>
+          ) : (
+            <BarChart data={despesas}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#222" />
+              <XAxis dataKey="nome" stroke="#888" />
+              <YAxis stroke="#888" />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#0b0b15",
+                  border: "1px solid #34EDF3",
+                  borderRadius: "12px",
+                }}
+                formatter={(value) => `R$ ${value}`}
+              />
+              <Bar dataKey="valor" radius={[10, 10, 0, 0]}>
+                {despesas.map((entry, index) => (
+                  <Cell
+                    key={`cell-bar-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          )}
+        </ResponsiveContainer>
+
+        {tipoGrafico === "pizza" && (
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+            <div className="text-center">
+              <p className="text-gray-400 text-sm">Total</p>
+              <p className="text-[#34EDF3] text-2xl font-bold">
+                R$ {total.toFixed(2)}
+              </p>
+            </div>
+          </div>
+        )}
       </div>
+
     </div>
   );
 }

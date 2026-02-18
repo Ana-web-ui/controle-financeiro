@@ -7,6 +7,8 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+ 
+
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -17,7 +19,7 @@ function Login() {
         localStorage.setItem("token", data.access_token);
 
         // 🔥 Redireciona para Home
-        navigate("/home");
+        navigate("/chat");
       } else {
         alert(data.detail);
       }
@@ -73,7 +75,7 @@ function Login() {
           <div className="text-center mt-6 text-sm text-gray-300">
             Não tem conta?{" "}
             <Link
-              to="/register"
+              to="/"
               className="text-pink-500 hover:text-pink-400 transition duration-300 font-medium"
             >
               crie uma aqui

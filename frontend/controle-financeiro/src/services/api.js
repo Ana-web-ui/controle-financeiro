@@ -28,3 +28,18 @@ export async function login(email, password) {
   return response.json();
 }
 
+export async function sendMessage(message) {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(`${API_URL}/chat`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ message }),
+  });
+
+  return response.json();
+}
+
