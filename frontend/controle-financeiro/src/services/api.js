@@ -9,8 +9,15 @@ export async function register(email, password) {
     body: JSON.stringify({ email, password }),
   });
 
-  return response.json();
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.detail || "Erro ao registrar");
+  }
+
+  return data;
 }
+
 
 export async function login(email, password) {
   const formData = new URLSearchParams();
@@ -42,4 +49,17 @@ export async function sendMessage(message) {
 
   return response.json();
 }
+
+export async function getMe() {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(`${API_URL}/me`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.json();
+}
+
 

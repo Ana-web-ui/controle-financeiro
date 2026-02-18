@@ -1,27 +1,35 @@
 import { useState } from "react";
 import { register } from "../services/api";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+
 
 function Registro() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
-  async function handleSubmit(e) {
-    e.preventDefault();
 
-    try {
-      const data = await register(email, password);
+ async function handleSubmit(e) {
+  e.preventDefault();
 
-      if (data.message) {
-        setMessage("Usuário criado com sucesso 🎉");
-      } else if (data.detail) {
-        setMessage(data.detail);
-      }
-    } catch (error) {
-      setMessage("Erro ao registrar usuário");
+  try {
+    const data = await register(email, password);
+
+    console.log("Resposta do backend:", data);
+
+    if (data.access_token) {
+      localStorage.setItem("token", data.access_token);
+      navigate("/chat");
     }
+
+  } catch (error) {
+    setMessage(error.message);
   }
+}
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#070710] px-4">

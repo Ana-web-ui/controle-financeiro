@@ -2,12 +2,14 @@ import { Menu, X, ArrowUp } from "lucide-react";
 import avatar from "../assets/image.png";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { getMe } from "../services/api";
 
 function Chat() {
   const [isOpen, setIsOpen] = useState(false);
   // STATES (coloque no topo do componente)
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
+  
   
   async function handleSend() {
   if (!message.trim()) return;

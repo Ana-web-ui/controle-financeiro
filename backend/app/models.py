@@ -1,3 +1,4 @@
+from sqlalchemy import Column, Integer, Float, String, Date, ForeignKey, Boolean
 from sqlalchemy import Column, Integer, Float, String, Date, ForeignKey
 from sqlalchemy.orm import relationship
 from .database import Base
@@ -9,7 +10,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
     password = Column(String)
-
+    is_configured = Column(Boolean, default=False)
     transactions = relationship("Transaction", back_populates="owner")
 
 

@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from ..schemas.user import UserCreate
 from ..database import get_db
 from ..models import User
-from ..auth import hash_password, verify_password, create_access_token
+from ..auth import get_current_user, hash_password, verify_password, create_access_token
 
 router = APIRouter()
 
@@ -19,12 +19,26 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
 
     hashed = hash_password(user.password)
 
-    new_user = User(email=user.email, password=hashed)
+    new_user = User(
+        email=user.email,
+        password=hashed,
+        is_configured=False  # 👈 prepara para primeiro acesso
+    )
+
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
 
-    return {"message": "Usuário criado com sucesso"}
+    # 🔥 usa o ID igual no login
+    access_token = create_access_token(
+        data={"sub": str(new_user.id)}
+    )
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
+
 
 
 
@@ -46,3 +60,11 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     )
 
     return {"access_token": access_token, "token_type": "bearer"}
+
+@router.get("/me")
+def get_me(current_user: User = Depends(get_current_user)):
+    return {
+        "id": current_user.id,
+        "email": current_user.email,
+        "is_configured": current_user.is_configured
+    }
