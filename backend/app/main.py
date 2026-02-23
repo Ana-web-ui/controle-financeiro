@@ -3,7 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .database import engine
 from .models import Base
-from .routes import chat, user_routes
+from .routes import chat, user_routes, dashboard
+
 
 Base.metadata.create_all(bind=engine)
 
@@ -21,3 +22,4 @@ app.add_middleware(
 # 🔥 Depois as rotas
 app.include_router(chat.router)
 app.include_router(user_routes.router)
+app.include_router(dashboard.router)

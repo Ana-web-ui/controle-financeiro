@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowUp } from "lucide-react";
 import {
   PieChart,
@@ -14,11 +14,9 @@ import {
 } from "recharts";
 
 function Dashboard() {
-  const [despesas, setDespesas] = useState([
-    { nome: "Aluguel", valor: 1200 },
-    { nome: "Mercado", valor: 600 },
-    { nome: "Internet", valor: 120 },
-  ]);
+  const [despesas, setDespesas] = useState([]);
+  const [saldoAtual, setSaldoAtual] = useState(0);
+  const [saldoInicial, setSaldoInicial] = useState(0);
 
   const [novaDespesa, setNovaDespesa] = useState("");
   const [valorDespesa, setValorDespesa] = useState("");
@@ -47,11 +45,44 @@ function Dashboard() {
 
   const [tipoGrafico, setTipoGrafico] = useState("pizza");
 
+  useEffect(() => {
+    async function loadDashboard() {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch("http://127.0.0.1:8000/dashboard", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      setSaldoInicial(data.saldo_inicial);
+      setSaldoAtual(data.saldo_atual);
+
+      // transformar formato para o gráfico
+      const formatado = data.gastos_por_categoria.map((item) => ({
+        nome: item.categoria,
+        valor: item.total,
+      }));
+
+      setDespesas(formatado);
+    }
+
+    loadDashboard();
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#070710] text-white p-6">
       <h1 className="text-2xl font-semibold text-pink-500 mb-6">
         Dashboard Financeiro
       </h1>
+      <div className="mb-6">
+        <p className="text-gray-400">Saldo inicial: R$ {saldoInicial}</p>
+        <p className="text-pink-500 text-xl font-bold">
+          Saldo atual: R$ {saldoAtual}
+        </p>
+      </div>
 
       {/* Gráfico */}
       <div className="relative bg-[#0b0b15] p-6 rounded-2xl border border-pink-500/20 shadow-lg shadow-pink-500/10 mb-8">
@@ -149,7 +180,6 @@ function Dashboard() {
           </div>
         )}
       </div>
-
     </div>
   );
 }

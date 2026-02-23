@@ -1,8 +1,7 @@
-from sqlalchemy import Column, Integer, Float, String, Date, ForeignKey, Boolean
-from sqlalchemy import Column, Integer, Float, String, Date, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, Float, Date, ForeignKey
 from sqlalchemy.orm import relationship
-from .database import Base
 from datetime import date
+from .database import Base
 
 class User(Base):
     __tablename__ = "users"
@@ -11,17 +10,30 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     password = Column(String)
     is_configured = Column(Boolean, default=False)
-    transactions = relationship("Transaction", back_populates="owner")
+    balance = Column(Float, default=0)
 
+    transactions = relationship("Transaction", back_populates="owner")
+    categories = relationship("Category", back_populates="owner")
 
 class Transaction(Base):
     __tablename__ = "transactions"
 
     id = Column(Integer, primary_key=True, index=True)
-    valor = Column(Float, nullable=False)
-    categoria = Column(String, nullable=False)
-    descricao = Column(String)
-    data = Column(Date, default=date.today)
+    description = Column(String)
+    amount = Column(Float)
+    date = Column(Date)
 
     user_id = Column(Integer, ForeignKey("users.id"))
+    category_id = Column(Integer, ForeignKey("categories.id"))
+
     owner = relationship("User", back_populates="transactions")
+    category = relationship("Category")
+    
+class Category(Base):
+    __tablename__ = "categories"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    user_id = Column(Integer, ForeignKey("users.id"))
+
+    owner = relationship("User", back_populates="categories")

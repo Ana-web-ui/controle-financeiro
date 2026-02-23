@@ -3,9 +3,10 @@ from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 from ..schemas.user import UserCreate
 from ..database import get_db
-from ..models import User
+from ..models import Transaction, Category,  User
 from ..auth import get_current_user, hash_password, verify_password, create_access_token
-
+from sqlalchemy import func
+from ..database import SessionLocal
 router = APIRouter()
 
 # ----------------------
@@ -68,3 +69,5 @@ def get_me(current_user: User = Depends(get_current_user)):
         "email": current_user.email,
         "is_configured": current_user.is_configured
     }
+
+
