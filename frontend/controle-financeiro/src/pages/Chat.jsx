@@ -2,77 +2,74 @@ import { Menu, X, ArrowUp } from "lucide-react";
 import avatar from "../assets/image.png";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { getMe } from "../services/api";
 
 function Chat() {
   const [isOpen, setIsOpen] = useState(false);
-  // STATES (coloque no topo do componente)
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  
-  
+
   async function handleSend() {
-  if (!message.trim()) return;
+    if (!message.trim()) return;
 
-  const token = localStorage.getItem("token");
+    const token = localStorage.getItem("access_token"); // ✅ corrigido
 
-  if (!token) {
-    setMessages((prev) => [
-      ...prev,
-      { type: "bot", text: "Usuário não autenticado. Faça login novamente." },
-    ]);
-    return;
-  }
-
-  // adiciona mensagem do usuário
-  setMessages((prev) => [...prev, { type: "user", text: message }]);
-
-  try {
-    const response = await fetch("http://127.0.0.1:8000/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ message }),
-    });
-
-    // 🔥 se o token estiver inválido ou expirado
-    if (response.status === 401) {
+    if (!token) {
       setMessages((prev) => [
         ...prev,
-        { type: "bot", text: "Sessão expirada. Faça login novamente." },
+        { type: "bot", text: "Usuário não autenticado. Faça login novamente." },
       ]);
       return;
     }
 
-    if (!response.ok) {
-      throw new Error("Erro na resposta do servidor");
+    // adiciona mensagem do usuário
+    setMessages((prev) => [...prev, { type: "user", text: message }]);
+    setMessage("");
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/chat/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ message }),
+      });
+
+      if (response.status === 401) {
+        setMessages((prev) => [
+          ...prev,
+          { type: "bot", text: "Sessão expirada. Faça login novamente." },
+        ]);
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error("Erro na resposta do servidor");
+      }
+
+      const data = await response.json();
+
+      // ✅ só mostra saldo se o backend retornar
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: "bot",
+          text:
+            data.saldo_atual !== undefined
+              ? `${data.mensagem}\nSaldo atual: R$ ${data.saldo_atual.toFixed(2)}`
+              : data.mensagem,
+        },
+      ]);
+    } catch (error) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: "bot",
+          text: "Erro ao conectar com o servidor 😕",
+        },
+      ]);
     }
-
-    const data = await response.json();
-
-    // adiciona resposta do bot
-    setMessages((prev) => [
-      ...prev,
-      {
-        type: "bot",
-        text: `${data.mensagem}\nSaldo atual: R$ ${data.saldo_atual}`,
-      },
-    ]);
-  } catch (error) {
-    setMessages((prev) => [
-      ...prev,
-      {
-        type: "bot",
-        text: "Erro ao conectar com o servidor 😕",
-      },
-    ]);
   }
-
-  setMessage("");
-}
-
 
   return (
     <div className="min-h-screen bg-[#070710] flex flex-col justify-between relative overflow-hidden">
